@@ -1,0 +1,128 @@
+/* ============================================================
+   Tailwind CSS v4
+   @import 한 줄이 v3의 @tailwind base/components/utilities 3줄을 대체합니다.
+   ============================================================ */
+@import "tailwindcss";
+
+/* ============================================================
+   @layer components — 재사용 컴포넌트 클래스
+
+   dept_runner_v2.js / emp_runner_v2.js 가 innerHTML 로 생성하는
+   <button class="btn btn-warning btn-sm"> 같은 클래스들을
+   @apply 로 정의합니다.
+
+   왜 @layer components 를 사용하나요?
+   - JS 템플릿 리터럴 안에 긴 Tailwind 클래스 문자열을 넣으면 가독성이 떨어집니다.
+   - 반복 사용되는 UI 패턴(버튼)은 컴포넌트 클래스로 묶어 한 곳에서 관리합니다.
+   - @layer components 에 정의하면 Tailwind 유틸리티 클래스가 항상 우선합니다.
+   ============================================================ */
+
+@layer components {
+
+    /* ── 버튼 기본 ── */
+    .btn {
+        @apply inline-block px-5 py-2.5 font-semibold rounded-md text-sm text-white
+               border-none cursor-pointer transition-all duration-300
+               hover:-translate-y-0.5 hover:shadow-md;
+    }
+
+    /* 소형 버튼 (테이블 안 수정/삭제) */
+    .btn-sm {
+        @apply px-3 py-1.5 text-xs rounded;
+    }
+
+    /* 버튼 색상 변형 */
+    .btn-primary   { @apply bg-blue-500    hover:bg-blue-600; }
+    .btn-success   { @apply bg-emerald-500 hover:bg-emerald-600; }
+    .btn-danger    { @apply bg-red-500     hover:bg-red-600; }
+    .btn-warning   { @apply bg-amber-400   hover:bg-amber-500; }
+    .btn-info      { @apply bg-sky-500     hover:bg-sky-600; }
+    .btn-secondary { @apply bg-slate-500   hover:bg-slate-600; }
+
+    /* JS 생성 테이블 행의 작업 버튼 열 */
+    .actions {
+        @apply flex gap-2 items-center;
+    }
+}
+
+
+/* ============================================================
+   @layer base — 동적 생성 테이블 행 기본 스타일
+
+   문제:
+     dept_runner_v2.js / emp_runner_v2.js 가 innerHTML 로 생성하는
+     <tr><td> 에는 Tailwind 클래스가 없습니다.
+     Tailwind v4 의 Preflight(기본 리셋)와 상호작용하면서
+     텍스트가 파란색으로 표시되는 현상이 발생합니다.
+
+   해결:
+     @layer base 에서 tbody td / tr 에 기본 스타일을 지정합니다.
+     - 정적 HTML 행: 명시적 유틸리티 클래스가 base 보다 우선하므로 영향 없음
+     - JS 생성 행: 클래스가 없으므로 base 스타일이 적용됨
+     - .actions td: @layer components 가 base 보다 우선하므로 flex 유지됨
+   ============================================================ */
+
+@layer base {
+    /* 테이블 셀 기본: 텍스트 색상 + 간격 + 구분선 + 세로 정렬 */
+    tbody td {
+        @apply text-slate-700 px-4 py-3 border-b border-slate-100 align-middle;
+    }
+
+    /* 행 호버 효과 */
+    tbody tr {
+        @apply transition-colors;
+    }
+    tbody tr:hover {
+        @apply bg-slate-50;
+    }
+}
+
+
+/* ============================================================
+   JavaScript 상태 제어 클래스
+
+   아래 클래스들은 JS 코드(showTab, showMessage, showLoading)가
+   직접 classList.add/remove 하거나 style.display 로 제어합니다.
+   Tailwind 유틸리티 클래스로는 동적 상태 전환 표현이 어려우므로
+   최소한의 커스텀 CSS 로 유지합니다.
+   ============================================================ */
+
+/* ── 탭 버튼 활성 상태 ── */
+/* showTab() 에서 .tab-button 에 active 클래스를 toggle 합니다. */
+.tab-button.active {
+    @apply text-blue-500 border-blue-500;
+}
+
+/* ── 섹션 표시 / 숨김 + 진입 애니메이션 ── */
+/* content-section 은 기본 숨김, active 클래스가 붙으면 표시됩니다. */
+.content-section        { display: none; }
+.content-section.active {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ── 알림 메시지 슬라이드 인/아웃 ── */
+/* utils.js → showMessage() 가 .show 클래스를 toggle 합니다.       */
+/* display:none ↔ block 은 CSS transition 이 적용되지 않으므로      */
+/* opacity + transform 으로 시각적 애니메이션을 구현합니다.          */
+.alert {
+    display: none;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity   0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.alert.show {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ── 로딩 인디케이터 ── */
+/* showLoading() 이 style.display 로 직접 제어합니다.              */
+.loading { display: none; }
