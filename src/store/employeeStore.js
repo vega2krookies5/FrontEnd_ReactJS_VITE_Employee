@@ -21,11 +21,12 @@
 import { create } from 'zustand';
 import { EmployeeApi }   from '../api/employeeApi.js';
 import { DepartmentApi } from '../api/departmentApi.js';
+import { devtools } from 'zustand/middleware'
 
 const employeeApi   = new EmployeeApi();
 const departmentApi = new DepartmentApi();
 
-export const useEmployeeStore = create((set, get) => ({
+export const useEmployeeStore = create(devtools((set, get) => ({
 
     // ── 상태(State) ───────────────────────────────────────────────────
     employees:   [],   // 현재 페이지 직원 목록
@@ -79,4 +80,4 @@ export const useEmployeeStore = create((set, get) => ({
     deleteEmployee: async (id) => {
         await employeeApi.delete(id);
     },
-}));
+})));
