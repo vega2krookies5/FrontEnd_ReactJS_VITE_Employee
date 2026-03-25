@@ -1,46 +1,49 @@
 /**
  * EmpList.jsx — 전체 직원 목록 테이블 컴포넌트
  *
- * ─── 이 컴포넌트가 하는 일 ────────────────────────────────────────────
- *  직원 배열을 받아 테이블 행으로 렌더링합니다.
- *  departments 배열을 함께 받아, emp.departmentId로 부서명을 찾아 표시합니다.
+ * ─── Zustand 적용 후 달라진 점 ────────────────────────────────────────
+ *  기존: EmpSection에서 9개 props를 받았습니다.
+ *        (employees, departments, loading, currentPage, totalPages,
+ *         onPageChange, onEdit, onDelete, onRefresh)
  *
- * ─── 클라이언트 조인 핵심 ────────────────────────────────────────────
- *  서버의 GET /api/employees/page 응답에서 departmentDto는 항상 null입니다.
- *  하지만 departmentId는 항상 있습니다.
- *
- *  departments 배열(전체 부서 목록)에서 해당 id를 찾으면 부서명을 알 수 있습니다.
- *
- *  departments.find(d => d.id === emp.departmentId)?.departmentName
- *  ↑ Array.find(): 조건에 맞는 첫 번째 요소를 반환합니다. 없으면 undefined.
- *  ↑ ?.           : 옵셔널 체이닝. undefined이면 에러 대신 undefined를 반환합니다.
- *  ↑ ?? 'N/A'    : null/undefined이면 'N/A'를 기본값으로 사용합니다.
+ *  변경: showToast 1개만 받습니다.
+ *        나머지는 useEmployeeStore()로 스토어에서 직접 가져옵니다.
  *
  * ─── props ────────────────────────────────────────────────────────────
- *  employees    : 직원 배열 (현재 페이지)
- *  departments  : 부서 배열 (전체 — 부서명 조인용)
- *  loading      : true이면 로딩 중 표시
- *  currentPage  : 현재 페이지 번호 (0부터)
- *  totalPages   : 전체 페이지 수
- *  onPageChange : 페이지 버튼 클릭 시 호출
- *  onEdit       : 수정 버튼 클릭 → 해당 직원 객체를 editingEmp로 설정
- *  onDelete     : 삭제 버튼 클릭 → id 전달
- *  onRefresh    : 새로고침 버튼 클릭
+ *  showToast: 알림 메시지 표시 함수 (App.jsx → EmpSection → EmpList)
  */
+import { useEmployeeStore } from '../../store/employeeStore.js';
 import Pagination from '../common/Pagination.jsx';
 
-export default function EmpList({
-    employees,
-    departments,
-    loading,
-    currentPage,
-    totalPages,
-    onPageChange,
-    onEdit,
-    onDelete,
-    onRefresh,
-}) {
-    // return (
+export default function EmpList({ showToast }) {
+
+    // ── 스토어에서 상태와 액션을 직접 가져옵니다 ─────────────────────
+    const {
+        employees,
+        departments,
+        loading,
+        currentPage,
+        totalPages,
+        setCurrentPage,
+        setEditingEmp,
+        deleteEmployee,
+        loadEmployeesPage,
+    } = useEmployeeStore();
+
+    // ── 직원 삭제 처리 ────────────────────────────────────────────────
+    // 스토어의 deleteEmployee 액션을 직접 호출합니다.
+    const handleDelete = async (id) => {
+        if (!confirm(`정말로 ID ${id} 직원을 삭제하시겠습니까?`)) return;
+        try {
+            await deleteEmployee(id);
+            showToast('직원이 삭제되었습니다.');
+            await loadEmployeesPage(currentPage); // 현재 페이지 새로고침
+        } catch (err) {
+            showToast(err.message || '삭제 실패', true);
+        }
+    };
+
+    return (
         <div className="card border border-slate-200 rounded-xl p-6 mb-6">
 
             {/* 헤더 */}
@@ -48,7 +51,16 @@ export default function EmpList({
                 <h3 className="text-lg font-semibold text-slate-700 border-l-4 border-blue-400 pl-3">
                     전체 직원 목록
                 </h3>
-                <button onClick={onRefresh} className="btn btn-info">새로고침</button>
+                <button
+                    onClick={() =>
+                        loadEmployeesPage(currentPage).catch(err =>
+                            showToast(err.message || '로드 실패', true)
+                        )
+                    }
+                    className="btn btn-info"
+                >
+                    새로고침
+                </button>
             </div>
 
             {loading && (
@@ -77,16 +89,7 @@ export default function EmpList({
                         </tr>
                     ) : (
                         employees.map(emp => {
-                            /*
-                             * 클라이언트 조인: emp.departmentId로 departments 배열에서 부서를 찾습니다.
-                             *
-                             * departments.find(d => d.id === emp.departmentId)
-                             *   → { id: 2, departmentName: '개발팀', ... } 또는 undefined
-                             * ?.departmentName
-                             *   → '개발팀' 또는 undefined
-                             * ?? 'N/A'
-                             *   → 부서 정보가 없으면 'N/A' 표시
-                             */
+                            // 클라이언트 조인: departmentId → 부서명
                             const deptName = departments
                                 .find(d => d.id === emp.departmentId)
                                 ?.departmentName ?? 'N/A';
@@ -101,13 +104,13 @@ export default function EmpList({
                                     <td>
                                         <div className="actions">
                                             <button
-                                                onClick={() => onEdit(emp)}
+                                                onClick={() => setEditingEmp(emp)}
                                                 className="btn btn-warning btn-sm"
                                             >
                                                 수정
                                             </button>
                                             <button
-                                                onClick={() => onDelete(emp.id)}
+                                                onClick={() => handleDelete(emp.id)}
                                                 className="btn btn-danger btn-sm"
                                             >
                                                 삭제
@@ -121,11 +124,15 @@ export default function EmpList({
                 </tbody>
             </table>
 
-            {/* 페이지 버튼: totalPages <= 1이면 Pagination 내부에서 자동으로 숨김 */}
+            {/*
+                Pagination에 setCurrentPage를 직접 전달합니다.
+                setCurrentPage(pageNo) → 스토어의 currentPage 변경
+                → EmpSection의 useEffect 감지 → loadEmployeesPage 자동 호출
+            */}
             <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={onPageChange}
+                onPageChange={setCurrentPage}
             />
         </div>
     );
