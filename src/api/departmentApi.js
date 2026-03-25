@@ -64,6 +64,16 @@ export class DepartmentApi {
         return response.json();
     }
 
+    // 페이징 부서 목록 조회 — GET /api/departments/page
+    // paging.md 6-2 참고: pageNo(0부터), pageSize, sortBy, sortDir
+    async getPage({ pageNo = 0, pageSize = 5, sortBy = 'id', sortDir = 'asc' } = {}) {
+        const params = new URLSearchParams({ pageNo, pageSize, sortBy, sortDir });
+        const response = await fetch(`${this.#baseUrl}/page?${params}`);
+        await checkResponse(response);
+        return response.json();
+        // 응답 구조: { content, pageNo, pageSize, totalElements, totalPages, last }
+    }
+
     // 부서 삭제 — DELETE /api/departments/{id}
     async delete(id) {
         const response = await fetch(`${this.#baseUrl}/${id}`, { method: 'DELETE' });

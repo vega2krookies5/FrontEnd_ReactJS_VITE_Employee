@@ -73,6 +73,16 @@ export class EmployeeApi {
         return response.json();
     }
 
+    // 페이징 직원 목록 조회 — GET /api/employees/page
+    // paging.md 6-1 참고: pageNo(0부터), pageSize, sortBy, sortDir
+    async getPage({ pageNo = 0, pageSize = 5, sortBy = 'id', sortDir = 'asc' } = {}) {
+        const params = new URLSearchParams({ pageNo, pageSize, sortBy, sortDir });
+        const response = await fetch(`${this.#baseUrl}/page?${params}`);
+        await checkResponse(response);
+        return response.json();
+        // 응답 구조: { content, pageNo, pageSize, totalElements, totalPages, last }
+    }
+
     // 직원 삭제 — DELETE /api/employees/{id}
     async delete(id) {
         const response = await fetch(`${this.#baseUrl}/${id}`, { method: 'DELETE' });
