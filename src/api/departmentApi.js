@@ -64,7 +64,7 @@ export class DepartmentApi {
         return response.json();
     }
 
-    // 페이징 부서 목록 조회 — GET /api/departments/page
+    // 페이징 부서 목록 조회 — GET /api/departments/page?pageNo=0?pageSize=5
     // paging.md 6-2 참고: pageNo(0부터), pageSize, sortBy, sortDir
     async getPage({ pageNo = 0, pageSize = 5, sortBy = 'id', sortDir = 'asc' } = {}) {
         const params = new URLSearchParams({ pageNo, pageSize, sortBy, sortDir });

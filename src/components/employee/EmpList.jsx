@@ -40,7 +40,7 @@ export default function EmpList({
     onDelete,
     onRefresh,
 }) {
-    return (
+    // return (
         <div className="card border border-slate-200 rounded-xl p-6 mb-6">
 
             {/* 헤더 */}
