@@ -21,7 +21,7 @@
 import { create } from 'zustand';
 import { EmployeeApi }   from '../api/employeeApi.js';
 import { DepartmentApi } from '../api/departmentApi.js';
-import { devtools } from 'zustand/middleware'
+import { devtools } from 'zustand/middleware';
 
 const employeeApi   = new EmployeeApi();
 const departmentApi = new DepartmentApi();

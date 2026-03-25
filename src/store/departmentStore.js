@@ -14,10 +14,11 @@
  */
 import { create } from 'zustand';
 import { DepartmentApi } from '../api/departmentApi.js';
+import { devtools } from 'zustand/middleware';
 
 const departmentApi = new DepartmentApi();
 
-export const useDepartmentStore = create((set, get) => ({
+export const useDepartmentStore = create(devtools((set, get) => ({
 
     // ── 상태(State) ───────────────────────────────────────────────────
     allDepartments: [], // DeptSearch select 드롭다운용 (전체)
@@ -69,4 +70,4 @@ export const useDepartmentStore = create((set, get) => ({
     deleteDepartment: async (id) => {
         await departmentApi.delete(id);
     },
-}));
+})));
