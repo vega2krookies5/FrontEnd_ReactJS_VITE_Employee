@@ -8,18 +8,11 @@
  * ─────────────────────────────────────────────────────────────
  */
 
-const checkResponse = async (response) => {
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({
-            message: `HTTP 오류! 상태 코드: ${response.status}`,
-        }));
-        throw new Error(errorData?.message ?? `HTTP 오류! 상태 코드: ${response.status}`);
-    }
-    return response;
-};
+import { BASE_URL, checkResponse } from "./fetchClient";
 
 export class EmployeeApi {
-    #baseUrl = 'http://localhost:8080/api/employees';
+    #baseUrl = `${BASE_URL}/api/employees`;
+    //'http://localhost:8080/api/employees';
 
     // 전체 직원 목록 조회 — GET /api/employees
     async getAll() {
