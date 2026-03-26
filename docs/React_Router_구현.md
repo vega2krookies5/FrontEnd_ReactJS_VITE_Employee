@@ -7,6 +7,10 @@
 ---
 
 ## 1. 왜 React Router를 도입하나
+## React Router 설치
+```
+   npm i react-router-dom
+```
 
 ### 현재 문제 — 탭 전환 방식의 한계
 

@@ -24,10 +24,14 @@ import { createRoot } from 'react-dom/client';
 import './style.css';    // Tailwind CSS — ECMAScript 버전과 동일한 파일을 그대로 사용합니다.
 import App from './App.jsx';
 
+import { BrowserRouter } from 'react-router-dom';
+
 // document.getElementById('root') → index.html의 <div id="root">를 찾아서
 // 그 안에 <App /> 컴포넌트를 그립니다.
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <App />
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
     </StrictMode>
 );
