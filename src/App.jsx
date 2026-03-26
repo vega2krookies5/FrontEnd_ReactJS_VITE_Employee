@@ -58,6 +58,14 @@ export default function App() {
                     <h1 className="text-3xl font-bold text-slate-800">
                         Employee &amp; Department Manager
                     </h1>
+                    
+                    <span className={`inline-block mt-2 px-3 py-0.5 rounded-full text-xs font-semibold
+                        ${import.meta.env.VITE_APP_ENV === 'production'
+                            ? 'bg-red-100 text-red-600'
+                            : 'bg-green-100 text-green-700'
+                        }`}>
+                        {import.meta.env.VITE_APP_ENV ?? 'unknown'} 환경
+                    </span>
                 </header>
 
                 {/* ── 탭 메뉴: button → NavLink ─────────────────────────

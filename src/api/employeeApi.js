@@ -28,6 +28,7 @@ export class EmployeeApi {
 
     // 전체 직원 목록 조회 — GET /api/employees
     async getAll() {
+        // await axios.get(this.#base); => response.data
         const { data } = await axios.get(this.#base);
         return data;
     }
