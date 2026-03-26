@@ -25,7 +25,7 @@ const [activeTab, setActiveTab] = useState('dept');
 
 | 문제 | 설명 |
 |------|------|
-| URL이 바뀌지 않음 | 직원 탭을 눌러도 주소창이 항상 `localhost:5173`으로 동일 |
+| URL이 바뀌지 않음 | 직원 탭을 눌러도 주소창이 항상 `localhost:3000`으로 동일 |
 | 새로고침 시 초기화 | 직원 탭에서 F5를 누르면 부서 탭으로 돌아옴 |
 | 즐겨찾기/공유 불가 | 특정 탭 URL을 저장하거나 공유할 수 없음 |
 | 뒤로가기 동작 안 함 | 브라우저 뒤로가기 버튼이 탭 전환 기록을 기억하지 못함 |
@@ -34,8 +34,8 @@ const [activeTab, setActiveTab] = useState('dept');
 
 | 탭 | URL |
 |----|-----|
-| 부서 관리 | `http://localhost:5173/dept` |
-| 직원 관리 | `http://localhost:5173/emp` |
+| 부서 관리 | `http://localhost:3000/dept` |
+| 직원 관리 | `http://localhost:3000/emp` |
 
 URL이 바뀌므로 새로고침, 즐겨찾기, 뒤로가기가 모두 정상 동작합니다.
 
