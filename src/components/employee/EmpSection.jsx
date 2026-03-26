@@ -14,7 +14,7 @@
  *
  * ─── props ────────────────────────────────────────────────────────────
  *  showToast: App.jsx에서 전달받은 알림 함수
- */
+ */  // 절대경로 
 import { useEffect } from 'react';
 import { useEmployeeStore } from '../../store/employeeStore.js';
 import EmpForm   from './EmpForm.jsx';

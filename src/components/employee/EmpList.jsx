@@ -23,7 +23,7 @@ export default function EmpList({ showToast }) {
         departments,
         loading,
         currentPage,
-        totalPages,
+        totalPages,        
         setCurrentPage,
         setEditingEmp,
         deleteEmployee,
