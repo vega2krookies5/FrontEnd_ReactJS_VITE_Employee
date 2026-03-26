@@ -19,13 +19,15 @@
  *  → 필요한 상태와 액션만 골라서 가져옵니다.
  */
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
 import { EmployeeApi }   from '../api/employeeApi.js';
 import { DepartmentApi } from '../api/departmentApi.js';
-import { devtools } from 'zustand/middleware';
 
 const employeeApi   = new EmployeeApi();
 const departmentApi = new DepartmentApi();
 
+//employeeStore 생성
 export const useEmployeeStore = create(devtools((set, get) => ({
 
     // ── 상태(State) ───────────────────────────────────────────────────
